@@ -21,7 +21,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({ config, setConfig, onUpload, p
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [hasCopied, setHasCopied] = React.useState(false);
   const [deployUrl, setDeployUrl] = React.useState('https://flipd.online/?share=...');
-  const [flipSpeedValue, setFlipSpeedValue] = React.useState(config.flipSpeed);
+  // Speed slider: 0.5x (slow) to 2.0x (fast), default 1.0x
+  // Convert between speed multiplier and duration (ms)
+  const durationToSpeed = (duration: number) => 800 / duration;
+  const speedToDuration = (speed: number) => Math.round(800 / speed);
+  const [flipSpeedValue, setFlipSpeedValue] = React.useState(durationToSpeed(config.flipSpeed));
   const [openSection, setOpenSection] = useState<SectionType>('physics');
   const [toast, setToast] = React.useState<{ message: string; visible: boolean; type?: 'default' | 'error' }>({ message: '', visible: false, type: 'default' });
   const [internalIsMinimized, setInternalIsMinimized] = useState(false);
@@ -223,17 +227,17 @@ export const Toolbar: React.FC<ToolbarProps> = ({ config, setConfig, onUpload, p
           <div className="flex flex-col gap-2">
             <div className="flex justify-between text-[10px] font-bold tracking-widest text-ink-dim">
               <span>FLIP_SPEED</span>
-              <span className="text-ink-main">{flipSpeedValue}ms</span>
+              <span className="text-ink-main">{flipSpeedValue.toFixed(1)}x</span>
             </div>
             <input
               type="range"
-              min="500"
-              max="2000"
-              step="100"
+              min="0.5"
+              max="2.0"
+              step="0.1"
               value={flipSpeedValue}
-              onChange={(e) => setFlipSpeedValue(parseInt(e.target.value))}
-              onMouseUp={() => setConfig({ ...config, flipSpeed: flipSpeedValue })}
-              onTouchEnd={() => setConfig({ ...config, flipSpeed: flipSpeedValue })}
+              onChange={(e) => setFlipSpeedValue(parseFloat(e.target.value))}
+              onMouseUp={() => setConfig({ ...config, flipSpeed: speedToDuration(flipSpeedValue) })}
+              onTouchEnd={() => setConfig({ ...config, flipSpeed: speedToDuration(flipSpeedValue) })}
               className="w-full h-[2px] bg-ink-light appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-ink-main [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-ink-main [&::-webkit-slider-thumb]:mt-[-1px]"
             />
           </div>
@@ -441,17 +445,17 @@ export const Toolbar: React.FC<ToolbarProps> = ({ config, setConfig, onUpload, p
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-between text-[10px] font-bold tracking-widest text-ink-dim">
                     <span>FLIP_SPEED</span>
-                    <span className="text-ink-main">{flipSpeedValue}ms</span>
+                    <span className="text-ink-main">{flipSpeedValue.toFixed(1)}x</span>
                   </div>
                   <input
                     type="range"
-                    min="500"
-                    max="2000"
-                    step="100"
+                    min="0.5"
+                    max="2.0"
+                    step="0.1"
                     value={flipSpeedValue}
-                    onChange={(e) => setFlipSpeedValue(parseInt(e.target.value))}
-                    onMouseUp={() => setConfig({ ...config, flipSpeed: flipSpeedValue })}
-                    onTouchEnd={() => setConfig({ ...config, flipSpeed: flipSpeedValue })}
+                    onChange={(e) => setFlipSpeedValue(parseFloat(e.target.value))}
+                    onMouseUp={() => setConfig({ ...config, flipSpeed: speedToDuration(flipSpeedValue) })}
+                    onTouchEnd={() => setConfig({ ...config, flipSpeed: speedToDuration(flipSpeedValue) })}
                     className="w-full h-[2px] bg-ink-light appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-ink-main [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-ink-main [&::-webkit-slider-thumb]:mt-[-1px]"
                   />
                 </div>
